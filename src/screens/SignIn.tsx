@@ -1,0 +1,111 @@
+import { useState } from 'react'
+import { supabase } from '../lib/supabase'
+
+interface Props {
+  onDemoSignIn: () => void
+}
+
+export default function SignIn({ onDemoSignIn }: Props) {
+  const [email, setEmail] = useState('')
+  const [sent,  setSent]  = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  async function handleSend() {
+    if (!email.trim()) return
+    setLoading(true)
+    const { error } = await supabase.auth.signInWithOtp({
+      email: email.trim(),
+      options: { emailRedirectTo: window.location.origin },
+    })
+    if (!error) setSent(true)
+    setLoading(false)
+  }
+
+  return (
+    <div
+      className="flex flex-col h-full"
+      style={{ padding: '80px 28px 40px' }}
+    >
+      <div className="flex items-baseline gap-2">
+        <span
+          className="font-mono uppercase"
+          style={{ fontSize: 10, letterSpacing: '0.18em', color: 'var(--mute)' }}
+        >
+          No. 001 · Private Edition
+        </span>
+      </div>
+
+      <h1
+        className="font-serif"
+        style={{ fontSize: 64, lineHeight: 0.95, margin: '32px 0 8px', letterSpacing: '-0.02em', color: 'var(--ink)' }}
+      >
+        Lu<span style={{ fontStyle: 'italic', color: 'var(--luca)' }}>&amp;</span>Fa
+      </h1>
+
+      <p
+        className="font-serif italic"
+        style={{ fontSize: 22, color: 'var(--mute)', margin: '0 0 auto', lineHeight: 1.25 }}
+      >
+        A small private journal of <br />
+        things-we-want-to-do, together.
+      </p>
+
+      {!sent ? (
+        <div className="flex flex-col gap-4">
+          <div className="rule" />
+          <span className="font-mono uppercase" style={{ fontSize: 10, letterSpacing: '0.18em', color: 'var(--mute)' }}>
+            Your email
+          </span>
+          <input
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && handleSend()}
+            placeholder="you@example.com"
+            className="font-serif w-full"
+            style={{
+              background: 'transparent', border: 0, outline: 0,
+              fontSize: 28, color: 'var(--ink)', padding: '4px 0',
+              letterSpacing: '-0.01em',
+            }}
+          />
+          <div className="rule" />
+          <button
+            onClick={handleSend}
+            disabled={loading}
+            className="flex items-center justify-center h-12 rounded-pill font-sans font-medium text-[15px] transition-opacity active:scale-[0.97]"
+            style={{ background: 'var(--ink)', color: 'var(--paper)', letterSpacing: '-0.01em', opacity: loading ? 0.6 : 1 }}
+          >
+            {loading ? 'Sending…' : 'Send me a magic link →'}
+          </button>
+          <p className="font-mono uppercase text-center" style={{ fontSize: 10, letterSpacing: '0.12em', color: 'var(--mute)', marginTop: 8 }}>
+            Closed system · Two readers only
+          </p>
+          {/* Demo shortcut */}
+          <button
+            onClick={onDemoSignIn}
+            className="font-serif italic text-center"
+            style={{ fontSize: 14, color: 'var(--mute)', marginTop: 4 }}
+          >
+            (Demo) skip sign-in →
+          </button>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-4" style={{ animation: 'fadeIn .3s' }}>
+          <div className="rule" />
+          <p className="font-serif italic" style={{ fontSize: 22, color: 'var(--ink)', lineHeight: 1.3 }}>
+            Sent. Check your inbox —<br />
+            the link expires in fifteen minutes.
+          </p>
+          <button
+            onClick={onDemoSignIn}
+            className="flex items-center justify-center h-12 rounded-pill font-sans font-medium text-[15px] transition-transform active:scale-[0.97]"
+            style={{ background: 'var(--ink)', color: 'var(--paper)', marginTop: 8 }}
+          >
+            (Demo) Open the app
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}

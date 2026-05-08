@@ -1,0 +1,169 @@
+/* Fonts must be imported before Tailwind directives */
+@import '@fontsource/instrument-serif/400.css';
+@import '@fontsource/instrument-serif/400-italic.css';
+@import '@fontsource-variable/geist';
+@import '@fontsource/jetbrains-mono/400.css';
+@import '@fontsource/jetbrains-mono/500.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --paper:         #f4ede1;
+  --paper-2:       #ebe2d2;
+  --paper-3:       #e1d6c2;
+  --ink:           #1a1714;
+  --ink-2:         #3a342d;
+  --mute:          #7a7064;
+  --mute-2:        #a39989;
+  --hairline:      #d6cbb4;
+  --hairline-soft: #e3d9c5;
+  --fab:           #D97757;
+  --luca:          #2A6FDB;
+  --done:          #3a7d5e;
+  --warn:          #b25a3c;
+  color-scheme: light dark;
+}
+
+.dark {
+  --paper:         #15120e;
+  --paper-2:       #1d1914;
+  --paper-3:       #28231b;
+  --ink:           #f4ede1;
+  --ink-2:         #d8cdb8;
+  --mute:          #a39989;
+  --mute-2:        #6e6557;
+  --hairline:      #322c22;
+  --hairline-soft: #271f15;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: #1a1714;
+  overflow: hidden;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+input, textarea {
+  font: inherit;
+  color: inherit;
+}
+
+/* ── Rule utilities ── */
+.rule-double {
+  height: 4px;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  background: transparent;
+  margin: 0;
+}
+
+.rule-soft {
+  height: 1px;
+  background: var(--hairline-soft);
+  border: 0;
+  margin: 0;
+}
+
+.rule {
+  height: 1px;
+  background: var(--hairline);
+  border: 0;
+  margin: 0;
+}
+
+/* ── Paper background radial gradients ── */
+.app-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(217,119,87,0.04), transparent 40%),
+    radial-gradient(circle at 82% 88%, rgba(42,111,219,0.04), transparent 40%);
+  pointer-events: none;
+}
+
+.dark .app-bg::before {
+  background:
+    radial-gradient(circle at 18% 12%, rgba(217,119,87,0.06), transparent 40%),
+    radial-gradient(circle at 82% 88%, rgba(42,111,219,0.06), transparent 40%);
+}
+
+/* ── Sheet animation ── */
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.sheet-enter { animation: slideUp 280ms cubic-bezier(.2,.8,.2,1) both; }
+.overlay-enter { animation: fadeIn 200ms ease both; }
+
+/* ── Check-pop animation ── */
+@keyframes checkPop {
+  0%   { transform: scale(0.6); opacity: 0; }
+  60%  { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.check-pop { animation: checkPop 500ms cubic-bezier(.2,.9,.3,1.2) both; }
+
+/* ── Confetti ── */
+@keyframes conf {
+  0%   { transform: translate(0,0) rotate(0deg); opacity: 1; }
+  100% { transform: translate(var(--cx), var(--cy)) rotate(var(--cr)); opacity: 0; }
+}
+.confetti-piece {
+  position: absolute;
+  width: 8px;
+  height: 14px;
+  animation: conf 1.2s ease-out forwards;
+  pointer-events: none;
+}
+
+/* ── Swipe entry ── */
+.entry-slide {
+  position: relative;
+  z-index: 2;
+  background: var(--paper);
+  transition: transform 250ms cubic-bezier(.2,.8,.2,1);
+}
+.entry-slide[data-open="true"] {
+  transform: translateX(-160px);
+}
+
+/* ── Scroll utilities ── */
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── Calendar drop highlight ── */
+.cal-cell[data-drop="true"] {
+  background: rgba(217,119,87,0.12);
+  outline: 2px dashed #D97757;
+  outline-offset: -2px;
+}
+
+/* ── Detail expand ── */
+.detail-expand { animation: fadeIn 250ms ease both; }
