@@ -6,18 +6,21 @@ interface Props {
 }
 
 export default function SignIn({ onDemoSignIn }: Props) {
-  const [email, setEmail] = useState('')
-  const [sent,  setSent]  = useState(false)
+  const [email,   setEmail]   = useState('')
+  const [sent,    setSent]    = useState(false)
   const [loading, setLoading] = useState(false)
+  const [err,     setErr]     = useState<string | null>(null)
 
   async function handleSend() {
     if (!email.trim()) return
     setLoading(true)
+    setErr(null)
     const { error } = await supabase.auth.signInWithOtp({
       email: email.trim(),
       options: { emailRedirectTo: window.location.origin },
     })
-    if (!error) setSent(true)
+    if (error) setErr(error.message)
+    else setSent(true)
     setLoading(false)
   }
 
@@ -78,6 +81,11 @@ export default function SignIn({ onDemoSignIn }: Props) {
           >
             {loading ? 'Sending…' : 'Send me a magic link →'}
           </button>
+          {err && (
+            <p className="font-sans text-sm text-center" style={{ color: 'var(--warn)', marginTop: 4 }}>
+              {err}
+            </p>
+          )}
           <p className="font-mono uppercase text-center" style={{ fontSize: 10, letterSpacing: '0.12em', color: 'var(--mute)', marginTop: 8 }}>
             Closed system · Two readers only
           </p>

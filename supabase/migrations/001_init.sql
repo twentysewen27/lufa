@@ -49,8 +49,8 @@ create policy "lufa_read" on activities
   for select using (
     auth.uid() in (
       select id from auth.users where email in (
-        '86.fabian@googlemail.com',  -- Fabian
-        'luca@example.com'            -- Luca — update with real address
+        'fabianschaefer@hotmail.de',  -- Fabian
+        'lucapauly@web.de'
       )
     )
   );
@@ -60,7 +60,7 @@ create policy "lufa_insert" on activities
     auth.uid() = created_by
     and auth.uid() in (
       select id from auth.users where email in (
-        '86.fabian@googlemail.com',
+        'fabianschaefer@hotmail.de',
         'luca@example.com'
       )
     )
@@ -70,7 +70,7 @@ create policy "lufa_update" on activities
   for update using (
     auth.uid() in (
       select id from auth.users where email in (
-        '86.fabian@googlemail.com',
+        'fabianschaefer@hotmail.de',
         'luca@example.com'
       )
     )
@@ -80,7 +80,7 @@ create policy "lufa_delete" on activities
   for delete using (
     auth.uid() in (
       select id from auth.users where email in (
-        '86.fabian@googlemail.com',
+        'fabianschaefer@hotmail.de',
         'luca@example.com'
       )
     )
