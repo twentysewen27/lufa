@@ -9,7 +9,10 @@ export function fmtTime(iso: string): string {
 }
 
 export function dayKey(d: Date): string {
-  return d.toISOString().slice(0, 10)
+  const y  = d.getFullYear()
+  const mo = String(d.getMonth() + 1).padStart(2, '0')
+  const dy = String(d.getDate()).padStart(2, '0')
+  return `${y}-${mo}-${dy}`
 }
 
 export function isSameDay(a: Date, b: Date): boolean {
