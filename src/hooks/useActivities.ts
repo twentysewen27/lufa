@@ -60,6 +60,7 @@ export function useActivities(userId: string | null) {
       .single()
 
     if (error) {
+      console.error('[lufa] insert error:', error)
       setActivities(prev => prev.filter(a => a.id !== optimistic.id))
     } else if (data) {
       setActivities(prev => prev.map(a => a.id === optimistic.id ? data as Activity : a))
