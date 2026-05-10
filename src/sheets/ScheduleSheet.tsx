@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Sheet from '../components/Sheet'
 import type { Activity } from '../lib/types'
 import { TIME_PRESETS } from '../lib/constants'
+import { dayKey } from '../lib/utils'
 
 interface Props {
   activity?:    Activity | null
@@ -16,7 +17,7 @@ export default function ScheduleSheet({ activity: a, defaultDate, onClose, onSav
     ? new Date(a.scheduled_at)
     : defaultDate ? new Date(defaultDate) : today
 
-  const [date, setDate] = useState(init.toISOString().slice(0, 10))
+  const [date, setDate] = useState(dayKey(init))
   const [time, setTime] = useState(
     a?.scheduled_at ? new Date(a.scheduled_at).toTimeString().slice(0, 5) : '19:30'
   )
@@ -69,7 +70,7 @@ export default function ScheduleSheet({ activity: a, defaultDate, onClose, onSav
         >
           <div className="flex gap-2">
             {days.map((d, i) => {
-              const k   = d.toISOString().slice(0, 10)
+              const k   = dayKey(d)
               const sel = k === date
               return (
                 <button
@@ -112,7 +113,7 @@ export default function ScheduleSheet({ activity: a, defaultDate, onClose, onSav
             style={{ background: 'transparent', border: 0, outline: 0, fontSize: 36, color: 'var(--ink)', letterSpacing: '-0.01em' }}
           />
           <span className="font-serif italic" style={{ fontSize: 18, color: 'var(--mute)' }}>
-            on {new Date(date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+            on {(() => { const [sy, sm, sd] = date.split('-').map(Number); return new Date(sy, sm - 1, sd).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }) })()}
           </span>
         </div>
         {/* quick-time presets */}
