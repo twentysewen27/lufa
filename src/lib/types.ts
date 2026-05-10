@@ -28,6 +28,8 @@ export interface Activity {
   rating?: 1 | 2 | 3 | 4 | 5
   done_note?: string
   this_week: boolean
+  longterm: boolean
+  longterm_phase?: LongtermPhase
   created_by: string
   created_at: string
   updated_at: string
@@ -36,7 +38,9 @@ export interface Activity {
 export type ActivityInsert = Omit<Activity, 'id' | 'updated_at'>
 export type ActivityPatch = Partial<Omit<Activity, 'id' | 'created_at' | 'created_by'>>
 
-export type Tab = 'backlog' | 'week' | 'calendar' | 'done'
+export type LongtermPhase = 'in-motion' | 'researching' | 'when-it-warms' | 'someday'
+
+export type Tab = 'backlog' | 'next' | 'calendar' | 'done'
 
 export type SheetState =
   | { kind: 'capture' }

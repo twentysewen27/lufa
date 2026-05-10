@@ -138,7 +138,7 @@ export default function Entry({ activity: a, index, onTap, onAction }: Props) {
           </div>
 
           {/* right side */}
-          <StatusDot userId={a.created_by} thisWeek={a.this_week} />
+          <StatusDot userId={a.created_by} thisWeek={a.this_week} longterm={a.longterm} />
         </div>
       </div>
     </div>

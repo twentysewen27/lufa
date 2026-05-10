@@ -2,7 +2,7 @@ import type { Tab } from '../lib/types'
 
 const TABS: { id: Tab; label: string }[] = [
   { id: 'backlog',  label: 'Backlog'   },
-  { id: 'week',     label: 'Week'      },
+  { id: 'next',     label: 'Next'      },
   { id: 'calendar', label: 'Calendar'  },
   { id: 'done',     label: 'Done'      },
 ]

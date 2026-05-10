@@ -10,7 +10,7 @@ import { fmtDate, fmtTime } from '../lib/utils'
 interface Props {
   activity: Activity
   onClose:  () => void
-  onAction: (action: 'schedule' | 'this_week' | 'done' | 'delete' | 'to_backlog') => void
+  onAction: (action: 'schedule' | 'this_week' | 'longterm' | 'done' | 'delete' | 'to_backlog') => void
 }
 
 export default function DetailSheet({ activity: a, onClose, onAction }: Props) {
@@ -132,9 +132,16 @@ export default function DetailSheet({ activity: a, onClose, onAction }: Props) {
             <button
               onClick={() => onAction('this_week')}
               className="inline-flex items-center h-10 rounded-pill border text-sm active:bg-paper-2 transition-colors"
-              style={{ padding: '0 16px', borderColor: 'var(--hairline)', color: 'var(--ink-2)' }}
+              style={{ padding: '0 16px', borderColor: 'var(--hairline)', color: a.this_week ? 'var(--fab)' : 'var(--ink-2)' }}
             >
-              {a.this_week ? '✓ This week' : 'Plan this week'}
+              {a.this_week ? '✓ On deck' : 'Add to Next'}
+            </button>
+            <button
+              onClick={() => onAction('longterm')}
+              className="inline-flex items-center h-10 rounded-pill border text-sm active:bg-paper-2 transition-colors"
+              style={{ padding: '0 16px', borderColor: 'var(--hairline)', color: a.longterm ? 'var(--luca)' : 'var(--ink-2)' }}
+            >
+              {a.longterm ? '✓ Long-term' : 'Mark long-term'}
             </button>
             <button
               onClick={() => onAction('done')}

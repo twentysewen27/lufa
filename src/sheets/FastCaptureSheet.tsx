@@ -15,6 +15,7 @@ export default function FastCaptureSheet({ currentUser, onClose, onSave }: Props
   const [title,    setTitle]    = useState('')
   const [category, setCategory] = useState<Category | null>(null)
   const [vibe,     setVibe]     = useState<Vibe[]>([])
+  const [bucket,   setBucket]   = useState<'backlog' | 'next' | 'long'>('backlog')
   const [expanded, setExpanded] = useState(false)
   const [notes,    setNotes]    = useState('')
   const [link,     setLink]     = useState('')
@@ -42,7 +43,8 @@ export default function FastCaptureSheet({ currentUser, onClose, onSave }: Props
       est_cost:     cost            ?? undefined,
       est_duration: duration        ?? undefined,
       status:       'backlog',
-      this_week:    false,
+      this_week:    bucket === 'next',
+      longterm:     bucket === 'long',
       created_by:   currentUser,
       created_at:   new Date().toISOString(),
     })
@@ -135,6 +137,47 @@ export default function FastCaptureSheet({ currentUser, onClose, onSave }: Props
               }}
             >
               {v}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="rule-soft" />
+
+      {/* where does it go? */}
+      <div style={{ padding: '14px 22px' }}>
+        <div style={eyebrow}>Where does it go?</div>
+        <div className="flex gap-2" style={{ marginTop: 10 }}>
+          {([
+            { id: 'backlog', label: 'Backlog',   sub: 'just an idea'  },
+            { id: 'next',    label: 'Up next',   sub: 'plan it soon'  },
+            { id: 'long',    label: 'Long-term',  sub: 'a slow arc'   },
+          ] as { id: 'backlog' | 'next' | 'long'; label: string; sub: string }[]).map(b => (
+            <button
+              key={b.id}
+              onClick={() => setBucket(b.id)}
+              className="flex flex-col items-start rounded-pill border transition-all"
+              style={{
+                gap: 2,
+                height: 'auto',
+                padding: '8px 12px',
+                fontFamily: 'var(--mono)',
+                background:  bucket === b.id ? 'var(--ink)' : 'transparent',
+                color:       bucket === b.id ? 'var(--paper)' : 'var(--ink-2)',
+                borderColor: bucket === b.id ? 'var(--ink)' : 'var(--hairline)',
+              }}
+            >
+              <span style={{ fontSize: 12 }}>{b.label}</span>
+              <span
+                style={{
+                  fontSize: 8,
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  color: bucket === b.id ? 'rgba(255,255,255,0.7)' : 'var(--mute-2)',
+                }}
+              >
+                {b.sub}
+              </span>
             </button>
           ))}
         </div>

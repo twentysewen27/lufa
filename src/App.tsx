@@ -6,7 +6,7 @@ import { useActivities } from './hooks/useActivities'
 
 import SignIn       from './screens/SignIn'
 import Backlog      from './screens/Backlog'
-import ThisWeek     from './screens/ThisWeek'
+import NextView     from './screens/NextView'
 import CalendarView from './screens/CalendarView'
 import DoneView     from './screens/DoneView'
 
@@ -21,7 +21,7 @@ import Confetti from './components/Confetti'
 export default function App() {
   const [session,    setSession]    = useState<Session | null>(null)
   const [demoMode,   setDemoMode]   = useState(false)
-  const [tab,        setTab]        = useState<Tab>('backlog')
+  const [tab,        setTab]        = useState<Tab>('next')
   const [sheet,      setSheet]      = useState<SheetState>(null)
   const [filters,    setFilters]    = useState<Filters>({ q: '', cat: [], vibe: [] })
   const [focusedMonth, setFocusedMonth] = useState(() => {
@@ -63,7 +63,7 @@ export default function App() {
 
   function handleDetailAction(
     a: Activity,
-    action: 'schedule' | 'this_week' | 'done' | 'delete' | 'to_backlog',
+    action: 'schedule' | 'this_week' | 'longterm' | 'done' | 'delete' | 'to_backlog',
   ) {
     switch (action) {
       case 'schedule':
@@ -74,6 +74,10 @@ export default function App() {
         break
       case 'this_week':
         updateActivity(a.id, { this_week: !a.this_week })
+        closeSheet()
+        break
+      case 'longterm':
+        updateActivity(a.id, { longterm: !a.longterm })
         closeSheet()
         break
       case 'delete':
@@ -151,8 +155,8 @@ export default function App() {
           onAction={handleEntryAction}
         />
       )}
-      {tab === 'week' && (
-        <ThisWeek activities={activities} onTap={openDetail} />
+      {tab === 'next' && (
+        <NextView activities={activities} onTap={openDetail} />
       )}
       {tab === 'calendar' && (
         <CalendarView

@@ -1,4 +1,4 @@
-import type { Category, Vibe, Cost, Duration } from './types'
+import type { Category, Vibe, Cost, Duration, LongtermPhase } from './types'
 
 export const CATEGORIES: Category[] = [
   'date_night', 'trip', 'restaurant', 'hike', 'event', 'routine', 'other',
@@ -44,3 +44,14 @@ export const TIME_PRESETS: [string, string][] = [
 ]
 
 export const RATING_LABELS = ['', 'meh', 'fine', 'nice', 'great', 'unforgettable']
+
+export const PHASE_LABEL: Record<LongtermPhase, string> = {
+  'in-motion':      'In motion',
+  'researching':    'Researching',
+  'when-it-warms':  'When it warms',
+  'someday':        'Someday',
+}
+
+export const PHASE_ORDER: LongtermPhase[] = [
+  'in-motion', 'researching', 'when-it-warms', 'someday',
+]
