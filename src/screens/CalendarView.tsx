@@ -37,7 +37,7 @@ export default function CalendarView({ activities, focusedMonth, setFocusedMonth
   const byDay = useMemo(() => {
     const map: Record<string, Activity[]> = {}
     planned.forEach(a => {
-      const k = new Date(a.scheduled_at!).toISOString().slice(0, 10)
+      const k = dayKey(new Date(a.scheduled_at!))
       ;(map[k] ??= []).push(a)
     })
     return map
@@ -159,7 +159,7 @@ export default function CalendarView({ activities, focusedMonth, setFocusedMonth
       {/* selected day plans */}
       <div style={{ padding: '20px 22px 8px' }}>
         <span className="font-mono uppercase" style={{ fontSize: 10, letterSpacing: '0.12em', color: 'var(--mute)' }}>
-          {new Date(selectedDay).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+          {(() => { const [sy, sm, sd] = selectedDay.split('-').map(Number); return new Date(sy, sm - 1, sd).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }) })()}
         </span>
       </div>
       <div className="rule-soft" style={{ margin: '0 22px' }} />

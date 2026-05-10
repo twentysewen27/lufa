@@ -29,7 +29,7 @@ export default function ThisWeek({ activities, onTap }: Props) {
 
   function byDay(d: Date) {
     return inWeek.filter(
-      a => a.scheduled_at && new Date(a.scheduled_at).toISOString().slice(0, 10) === dayKey(d)
+      a => a.scheduled_at && dayKey(new Date(a.scheduled_at)) === dayKey(d)
     )
   }
   const anytime = inWeek.filter(a => a.this_week && !a.scheduled_at)
