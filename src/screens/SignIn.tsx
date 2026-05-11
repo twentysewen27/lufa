@@ -34,7 +34,7 @@ export default function SignIn({ onDemoSignIn }: Props) {
           className="font-mono uppercase"
           style={{ fontSize: 10, letterSpacing: '0.18em', color: 'var(--mute)' }}
         >
-          No. 001 · Private Edition
+          No. 001 · Private Edition · V0.1
         </span>
       </div>
 
