@@ -42,7 +42,19 @@ export default function App() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSession(data.session))
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_ev, s) => setSession(s))
-    return () => subscription.unsubscribe()
+
+    // Re-check session when app returns to foreground (e.g. after tapping magic link in Safari)
+    function onVisible() {
+      if (document.visibilityState === 'visible') {
+        supabase.auth.getSession().then(({ data }) => setSession(data.session))
+      }
+    }
+    document.addEventListener('visibilitychange', onVisible)
+
+    return () => {
+      subscription.unsubscribe()
+      document.removeEventListener('visibilitychange', onVisible)
+    }
   }, [])
 
   useEffect(() => {
@@ -56,7 +68,7 @@ export default function App() {
     return id ? activities.find(a => a.id === id) : undefined
   }
 
-  // ── Actions ──────────────────────────────────────────────────────────
+  // ── Actions ────────────────────────────────────────────────────
 
   function openDetail(a: Activity) { setSheet({ kind: 'detail', activityId: a.id }) }
   function closeSheet()            { setSheet(null) }
@@ -120,7 +132,7 @@ export default function App() {
     setTimeout(() => setConfetti(null), 1400)
   }
 
-  // ── Auth gate ─────────────────────────────────────────────────────────
+  // ── Auth gate ──────────────────────────────────────────────────
 
   if (!session && !demoMode) {
     return (
@@ -133,7 +145,7 @@ export default function App() {
     )
   }
 
-  // ── Sheet target ──────────────────────────────────────────────────────
+  // ── Sheet target ──────────────────────────────────────────────────
 
   const editActivity     = sheet?.kind === 'edit'     ? findActivity(sheet.activityId) : undefined
   const detailActivity   = sheet?.kind === 'detail'   ? findActivity(sheet.activityId) : undefined
@@ -141,7 +153,7 @@ export default function App() {
   const doneActivity     = sheet?.kind === 'done'     ? findActivity(sheet.activityId) : undefined
   const scheduleDefault  = sheet?.kind === 'schedule' ? sheet.defaultDate : undefined
 
-  // ── Render ────────────────────────────────────────────────────────────
+  // ── Render ──────────────────────────────────────────────────────
 
   return (
     <div
