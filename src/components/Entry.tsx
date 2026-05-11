@@ -52,20 +52,13 @@ export default function Entry({ activity: a, index, onTap, onAction }: Props) {
   return (
     <div className="relative overflow-hidden" style={{ borderBottom: '1px solid var(--hairline-soft)' }}>
       {/* swipe actions */}
-      <div className="absolute right-0 top-0 bottom-0 flex z-10" style={{ width: 160 }}>
+      <div className="absolute right-0 top-0 bottom-0 flex z-10" style={{ width: 90 }}>
         <button
           className="flex-1 flex flex-col items-center justify-center font-mono text-[10px] uppercase tracking-widest text-paper"
           style={{ background: 'var(--ink)' }}
           onClick={() => { setSwipeOpen(false); onAction('schedule') }}
         >
           <span>Schedule</span>
-        </button>
-        <button
-          className="flex-1 flex flex-col items-center justify-center font-mono text-[10px] uppercase tracking-widest text-paper"
-          style={{ background: 'var(--done)' }}
-          onClick={() => { setSwipeOpen(false); onAction('done') }}
-        >
-          <span>Done</span>
         </button>
       </div>
 
