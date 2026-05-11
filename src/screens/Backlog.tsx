@@ -15,7 +15,7 @@ interface Props {
 }
 
 export default function Backlog({ activities, filters, setFilters, currentUser, onTap, onAction }: Props) {
-  const backlog = activities.filter(a => a.status === 'backlog')
+  const backlog = activities.filter(a => a.status === 'backlog' && !a.longterm)
 
   const filtered = backlog
     .filter(a => {
