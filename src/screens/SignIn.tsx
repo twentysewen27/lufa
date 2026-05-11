@@ -126,8 +126,7 @@ export default function SignIn({ onDemoSignIn }: Props) {
             value={code}
             onChange={e => setCode(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && handleVerify()}
-            placeholder="123456"
-            maxLength={6}
+            placeholder="12345678"
             className="font-mono w-full"
             style={{
               background: 'transparent', border: 0, outline: 0,
@@ -138,9 +137,9 @@ export default function SignIn({ onDemoSignIn }: Props) {
           <div className="rule" />
           <button
             onClick={handleVerify}
-            disabled={verifying || code.length < 6}
+            disabled={verifying || !code.trim()}
             className="flex items-center justify-center h-12 rounded-pill font-sans font-medium text-[15px] transition-opacity active:scale-[0.97]"
-            style={{ background: 'var(--ink)', color: 'var(--paper)', letterSpacing: '-0.01em', opacity: (verifying || code.length < 6) ? 0.4 : 1 }}
+            style={{ background: 'var(--ink)', color: 'var(--paper)', letterSpacing: '-0.01em', opacity: (verifying || !code.trim()) ? 0.4 : 1 }}
           >
             {verifying ? 'Signing in…' : 'Sign in →'}
           </button>
