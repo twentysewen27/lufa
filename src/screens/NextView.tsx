@@ -25,13 +25,7 @@ function timeStr(iso: string): string {
 }
 
 function isLongterm(a: Activity): boolean {
-  if (a.status === 'done') return false
-  return (
-    a.longterm === true ||
-    a.category === 'trip' ||
-    a.est_duration === 'weekend' ||
-    a.est_duration === 'longer'
-  )
+  return a.status !== 'done' && a.longterm === true
 }
 
 function phaseLabel(a: Activity): string {
