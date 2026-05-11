@@ -61,12 +61,32 @@ export default function FastCaptureSheet({ currentUser, onClose, onSave }: Props
 
   return (
     <Sheet onClose={onClose}>
-      {/* header */}
-      <div className="flex justify-between items-center" style={{ padding: '4px 22px 0' }}>
+      {/* sticky header */}
+      <div
+        className="flex justify-between items-center"
+        style={{
+          position: 'sticky', top: 0, zIndex: 10,
+          background: 'var(--paper)',
+          padding: '4px 22px 0',
+        }}
+      >
         <button onClick={onClose} style={eyebrow}>Cancel</button>
         <span style={eyebrow}>New idea</span>
-        <button onClick={save} style={{ ...eyebrow, color: canSave ? 'var(--ink)' : 'var(--mute-2)', opacity: canSave ? 1 : 0.5 }}>
-          Save ↵
+        <button
+          onClick={save}
+          disabled={!canSave}
+          className="inline-flex items-center rounded-pill font-sans font-medium transition-opacity"
+          style={{
+            height: 34,
+            padding: '0 16px',
+            fontSize: 13,
+            letterSpacing: '-0.01em',
+            background: 'var(--ink)',
+            color: 'var(--paper)',
+            opacity: canSave ? 1 : 0.35,
+          }}
+        >
+          Save
         </button>
       </div>
 
