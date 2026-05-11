@@ -6,10 +6,12 @@ interface Props {
 }
 
 export default function SignIn({ onDemoSignIn }: Props) {
-  const [email,   setEmail]   = useState('')
-  const [sent,    setSent]    = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [err,     setErr]     = useState<string | null>(null)
+  const [email,     setEmail]     = useState('')
+  const [sent,      setSent]      = useState(false)
+  const [code,      setCode]      = useState('')
+  const [loading,   setLoading]   = useState(false)
+  const [verifying, setVerifying] = useState(false)
+  const [err,       setErr]       = useState<string | null>(null)
 
   async function handleSend() {
     if (!email.trim()) return
@@ -22,6 +24,19 @@ export default function SignIn({ onDemoSignIn }: Props) {
     if (error) setErr(error.message)
     else setSent(true)
     setLoading(false)
+  }
+
+  async function handleVerify() {
+    if (!code.trim()) return
+    setVerifying(true)
+    setErr(null)
+    const { error } = await supabase.auth.verifyOtp({
+      email: email.trim(),
+      token: code.trim(),
+      type: 'email',
+    })
+    if (error) setErr(error.message)
+    setVerifying(false)
   }
 
   return (
@@ -79,7 +94,7 @@ export default function SignIn({ onDemoSignIn }: Props) {
             className="flex items-center justify-center h-12 rounded-pill font-sans font-medium text-[15px] transition-opacity active:scale-[0.97]"
             style={{ background: 'var(--ink)', color: 'var(--paper)', letterSpacing: '-0.01em', opacity: loading ? 0.6 : 1 }}
           >
-            {loading ? 'Sending…' : 'Send me a magic link →'}
+            {loading ? 'Sending…' : 'Send me a code →'}
           </button>
           {err && (
             <p className="font-sans text-sm text-center" style={{ color: 'var(--warn)', marginTop: 4 }}>
@@ -89,7 +104,6 @@ export default function SignIn({ onDemoSignIn }: Props) {
           <p className="font-mono uppercase text-center" style={{ fontSize: 10, letterSpacing: '0.12em', color: 'var(--mute)', marginTop: 8 }}>
             Closed system · Two readers only
           </p>
-          {/* Demo shortcut */}
           <button
             onClick={onDemoSignIn}
             className="font-serif italic text-center"
@@ -102,15 +116,45 @@ export default function SignIn({ onDemoSignIn }: Props) {
         <div className="flex flex-col gap-4" style={{ animation: 'fadeIn .3s' }}>
           <div className="rule" />
           <p className="font-serif italic" style={{ fontSize: 22, color: 'var(--ink)', lineHeight: 1.3 }}>
-            Sent. Check your inbox —<br />
-            the link expires in fifteen minutes.
+            Sent. Enter the code<br />
+            from your email —
           </p>
+          <input
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            value={code}
+            onChange={e => setCode(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && handleVerify()}
+            placeholder="123456"
+            maxLength={6}
+            className="font-mono w-full"
+            style={{
+              background: 'transparent', border: 0, outline: 0,
+              fontSize: 40, color: 'var(--ink)', padding: '4px 0',
+              letterSpacing: '0.2em',
+            }}
+          />
+          <div className="rule" />
           <button
-            onClick={onDemoSignIn}
-            className="flex items-center justify-center h-12 rounded-pill font-sans font-medium text-[15px] transition-transform active:scale-[0.97]"
-            style={{ background: 'var(--ink)', color: 'var(--paper)', marginTop: 8 }}
+            onClick={handleVerify}
+            disabled={verifying || code.length < 6}
+            className="flex items-center justify-center h-12 rounded-pill font-sans font-medium text-[15px] transition-opacity active:scale-[0.97]"
+            style={{ background: 'var(--ink)', color: 'var(--paper)', letterSpacing: '-0.01em', opacity: (verifying || code.length < 6) ? 0.4 : 1 }}
           >
-            (Demo) Open the app
+            {verifying ? 'Signing in…' : 'Sign in →'}
+          </button>
+          {err && (
+            <p className="font-sans text-sm text-center" style={{ color: 'var(--warn)', marginTop: 4 }}>
+              {err}
+            </p>
+          )}
+          <button
+            onClick={() => { setSent(false); setCode(''); setErr(null) }}
+            className="font-serif italic text-center"
+            style={{ fontSize: 14, color: 'var(--mute)', marginTop: 4 }}
+          >
+            ← use a different email
           </button>
         </div>
       )}
