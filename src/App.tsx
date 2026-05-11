@@ -63,9 +63,12 @@ export default function App() {
 
   function handleDetailAction(
     a: Activity,
-    action: 'schedule' | 'this_week' | 'longterm' | 'done' | 'delete' | 'to_backlog',
+    action: 'edit' | 'schedule' | 'this_week' | 'longterm' | 'done' | 'delete' | 'to_backlog',
   ) {
     switch (action) {
+      case 'edit':
+        setSheet({ kind: 'edit', activityId: a.id })
+        break
       case 'schedule':
         setSheet({ kind: 'schedule', activityId: a.id })
         break
@@ -132,6 +135,7 @@ export default function App() {
 
   // ── Sheet target ──────────────────────────────────────────────────────
 
+  const editActivity     = sheet?.kind === 'edit'     ? findActivity(sheet.activityId) : undefined
   const detailActivity   = sheet?.kind === 'detail'   ? findActivity(sheet.activityId) : undefined
   const scheduleActivity = sheet?.kind === 'schedule' ? findActivity(sheet.activityId) : undefined
   const doneActivity     = sheet?.kind === 'done'     ? findActivity(sheet.activityId) : undefined
@@ -198,6 +202,14 @@ export default function App() {
           currentUser={currentUser}
           onClose={closeSheet}
           onSave={(insert) => { addActivity(insert); closeSheet() }}
+        />
+      )}
+      {sheet?.kind === 'edit' && editActivity && (
+        <FastCaptureSheet
+          currentUser={currentUser}
+          activity={editActivity}
+          onClose={closeSheet}
+          onUpdate={(id, patch) => { updateActivity(id, patch); closeSheet() }}
         />
       )}
       {sheet?.kind === 'detail' && detailActivity && (

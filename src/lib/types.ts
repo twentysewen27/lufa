@@ -46,6 +46,7 @@ export type Tab = 'backlog' | 'next' | 'calendar' | 'done'
 
 export type SheetState =
   | { kind: 'capture' }
+  | { kind: 'edit';     activityId: string }
   | { kind: 'detail';   activityId: string }
   | { kind: 'schedule'; activityId: string | null; defaultDate?: string }
   | { kind: 'done';     activityId: string }

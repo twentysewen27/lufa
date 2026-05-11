@@ -10,7 +10,7 @@ import { fmtDate, fmtTime } from '../lib/utils'
 interface Props {
   activity: Activity
   onClose:  () => void
-  onAction: (action: 'schedule' | 'this_week' | 'longterm' | 'done' | 'delete' | 'to_backlog') => void
+  onAction: (action: 'edit' | 'schedule' | 'this_week' | 'longterm' | 'done' | 'delete' | 'to_backlog') => void
 }
 
 export default function DetailSheet({ activity: a, onClose, onAction }: Props) {
@@ -46,8 +46,8 @@ export default function DetailSheet({ activity: a, onClose, onAction }: Props) {
         >
           {a.status}
         </span>
-        <button onClick={() => onAction('delete')} style={{ ...eyebrow, color: 'var(--warn)' }}>
-          Delete
+        <button onClick={() => onAction('edit')} style={{ ...eyebrow, color: 'var(--ink)' }}>
+          Edit
         </button>
       </div>
 
@@ -161,6 +161,16 @@ export default function DetailSheet({ activity: a, onClose, onAction }: Props) {
             ← Back to backlog
           </button>
         )}
+      </div>
+
+      {/* delete — bottom right */}
+      <div className="flex justify-end" style={{ padding: '10px 22px 0' }}>
+        <button
+          onClick={() => onAction('delete')}
+          style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--warn)' }}
+        >
+          Delete
+        </button>
       </div>
     </Sheet>
   )

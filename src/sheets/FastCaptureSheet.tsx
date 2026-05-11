@@ -2,26 +2,43 @@ import { useState, useRef, useEffect } from 'react'
 import Sheet from '../components/Sheet'
 import CatDot from '../components/CatDot'
 import Avatar from '../components/Avatar'
-import type { Category, Vibe, Cost, Duration, ActivityInsert } from '../lib/types'
+import type { Activity, Category, Vibe, Cost, Duration, ActivityInsert, ActivityPatch } from '../lib/types'
 import { CATEGORIES, CAT_LABEL, VIBES, COSTS, DURATIONS, USERS } from '../lib/constants'
 
 interface Props {
   currentUser: string
   onClose:     () => void
-  onSave:      (insert: ActivityInsert) => void
+  // create mode
+  onSave?:     (insert: ActivityInsert) => void
+  // edit mode
+  activity?:   Activity
+  onUpdate?:   (id: string, patch: ActivityPatch) => void
 }
 
-export default function FastCaptureSheet({ currentUser, onClose, onSave }: Props) {
-  const [title,    setTitle]    = useState('')
-  const [category, setCategory] = useState<Category | null>(null)
-  const [vibe,     setVibe]     = useState<Vibe[]>([])
-  const [bucket,   setBucket]   = useState<'backlog' | 'next' | 'long'>('backlog')
-  const [expanded, setExpanded] = useState(false)
-  const [notes,    setNotes]    = useState('')
-  const [link,     setLink]     = useState('')
-  const [location, setLocation] = useState('')
-  const [cost,     setCost]     = useState<Cost | null>(null)
-  const [duration, setDuration] = useState<Duration | null>(null)
+export default function FastCaptureSheet({ currentUser, onClose, onSave, activity, onUpdate }: Props) {
+  const editMode = !!activity
+
+  function initBucket(): 'backlog' | 'next' | 'long' {
+    if (!activity) return 'backlog'
+    if (activity.this_week) return 'next'
+    if (activity.longterm)  return 'long'
+    return 'backlog'
+  }
+
+  const [title,    setTitle]    = useState(activity?.title    ?? '')
+  const [category, setCategory] = useState<Category | null>(activity?.category ?? null)
+  const [vibe,     setVibe]     = useState<Vibe[]>(activity?.vibe ?? [])
+  const [bucket,   setBucket]   = useState<'backlog' | 'next' | 'long'>(initBucket)
+  const [notes,    setNotes]    = useState(activity?.notes    ?? '')
+  const [link,     setLink]     = useState(activity?.link     ?? '')
+  const [location, setLocation] = useState(activity?.location ?? '')
+  const [cost,     setCost]     = useState<Cost | null>(activity?.est_cost ?? null)
+  const [duration, setDuration] = useState<Duration | null>(activity?.est_duration ?? null)
+
+  // auto-expand details if any detail field is already filled
+  const hasDetails = !!(activity?.notes || activity?.link || activity?.location || activity?.est_cost || activity?.est_duration)
+  const [expanded, setExpanded] = useState(hasDetails)
+
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
@@ -33,21 +50,37 @@ export default function FastCaptureSheet({ currentUser, onClose, onSave }: Props
 
   function save() {
     if (!canSave) return
-    onSave({
-      title:        title.trim(),
-      category:     category ?? undefined,
-      vibe:         vibe.length ? vibe : undefined,
-      notes:        notes.trim()    || undefined,
-      link:         link.trim()     || undefined,
-      location:     location.trim() || undefined,
-      est_cost:     cost            ?? undefined,
-      est_duration: duration        ?? undefined,
-      status:       'backlog',
-      this_week:    bucket === 'next',
-      longterm:     bucket === 'long',
-      created_by:   currentUser,
-      created_at:   new Date().toISOString(),
-    })
+
+    if (editMode && activity && onUpdate) {
+      onUpdate(activity.id, {
+        title:        title.trim(),
+        category:     category ?? undefined,
+        vibe:         vibe.length ? vibe : undefined,
+        notes:        notes.trim()    || undefined,
+        link:         link.trim()     || undefined,
+        location:     location.trim() || undefined,
+        est_cost:     cost            ?? undefined,
+        est_duration: duration        ?? undefined,
+        this_week:    bucket === 'next',
+        longterm:     bucket === 'long',
+      })
+    } else if (onSave) {
+      onSave({
+        title:        title.trim(),
+        category:     category ?? undefined,
+        vibe:         vibe.length ? vibe : undefined,
+        notes:        notes.trim()    || undefined,
+        link:         link.trim()     || undefined,
+        location:     location.trim() || undefined,
+        est_cost:     cost            ?? undefined,
+        est_duration: duration        ?? undefined,
+        status:       'backlog',
+        this_week:    bucket === 'next',
+        longterm:     bucket === 'long',
+        created_by:   currentUser,
+        created_at:   new Date().toISOString(),
+      })
+    }
   }
 
   function toggleCat(c: Category) {
@@ -71,7 +104,7 @@ export default function FastCaptureSheet({ currentUser, onClose, onSave }: Props
         }}
       >
         <button onClick={onClose} style={eyebrow}>Cancel</button>
-        <span style={eyebrow}>New idea</span>
+        <span style={eyebrow}>{editMode ? 'Edit idea' : 'New idea'}</span>
         <button
           onClick={save}
           disabled={!canSave}
@@ -86,7 +119,7 @@ export default function FastCaptureSheet({ currentUser, onClose, onSave }: Props
             opacity: canSave ? 1 : 0.35,
           }}
         >
-          Save
+          {editMode ? 'Save changes' : 'Save'}
         </button>
       </div>
 
@@ -94,7 +127,7 @@ export default function FastCaptureSheet({ currentUser, onClose, onSave }: Props
 
       {/* title field */}
       <div style={{ padding: '4px 22px 12px' }}>
-        <div style={eyebrow}>What's the idea?</div>
+        <div style={eyebrow}>{editMode ? 'Title' : "What's the idea?"}</div>
         <textarea
           ref={inputRef}
           value={title}
@@ -169,8 +202,8 @@ export default function FastCaptureSheet({ currentUser, onClose, onSave }: Props
         <div style={eyebrow}>Where does it go?</div>
         <div className="flex gap-2" style={{ marginTop: 10 }}>
           {([
-            { id: 'backlog', label: 'Backlog',   sub: 'just an idea'  },
-            { id: 'next',    label: 'Up next',   sub: 'plan it soon'  },
+            { id: 'backlog', label: 'Backlog',    sub: 'just an idea' },
+            { id: 'next',    label: 'Up next',    sub: 'plan it soon' },
             { id: 'long',    label: 'Long-term',  sub: 'a slow arc'   },
           ] as { id: 'backlog' | 'next' | 'long'; label: string; sub: string }[]).map(b => (
             <button
@@ -272,7 +305,7 @@ export default function FastCaptureSheet({ currentUser, onClose, onSave }: Props
       <div style={{ padding: '12px 22px 0' }}>
         <div className="flex items-center gap-2" style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--mute)' }}>
           <Avatar userId={currentUser} />
-          adding as {USERS[currentUser]?.name?.toLowerCase()}
+          {editMode ? 'editing as' : 'adding as'} {USERS[currentUser]?.name?.toLowerCase()}
         </div>
       </div>
     </Sheet>
