@@ -1,7 +1,7 @@
 import type { Category, Vibe, Cost, Duration, LongtermPhase } from './types'
 
 export const CATEGORIES: Category[] = [
-  'date_night', 'trip', 'restaurant', 'hike', 'event', 'routine', 'other',
+  'date_night', 'trip', 'restaurant', 'hike', 'event', 'culture', 'learn', 'routine', 'other',
 ]
 
 export const CAT_LABEL: Record<Category, string> = {
@@ -10,6 +10,8 @@ export const CAT_LABEL: Record<Category, string> = {
   restaurant: 'Restaurant',
   hike:       'Hike',
   event:      'Event',
+  culture:    'Culture',
+  learn:      'Learn',
   routine:    'Routine',
   other:      'Other',
 }
@@ -20,6 +22,8 @@ export const CAT_COLOR: Record<Category, string> = {
   restaurant: '#c08a3e',
   hike:       '#3a7d5e',
   event:      '#8b3a8b',
+  culture:    '#4a6741',
+  learn:      '#2e7a8a',
   routine:    '#6b6359',
   other:      '#7a7064',
 }

@@ -4,6 +4,8 @@ export type Category =
   | 'restaurant'
   | 'hike'
   | 'event'
+  | 'culture'
+  | 'learn'
   | 'routine'
   | 'other'
 
